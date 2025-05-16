@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Listado de Empleos - Workify</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+ <style>
+  body {
+    background-color: #121212;
+    color: #ddd;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Botón Volver a inicio */
+  .btn-back {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #222;
+    color: #eee;
+    border: 1.5px solid #444;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    z-index: 1000;
+    text-decoration: none;
+  }
+  .btn-back:hover {
+    background-color: #007bff;
+    border-color: #0056b3;
+    color: #fff;
+  }
+  .btn-back i {
+    font-size: 1.2rem;
+  }
+
+  /* Filtros */
+  select.form-select, input.form-control {
+    background-color: #1f1f1f;
+    border: 1.5px solid #333;
+    color: #ddd;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+  }
+  select.form-select:focus, input.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px #007bffa8;
+    outline: none;
+    color: #fff;
+    background-color: #222;
+  }
+  select.form-select option {
+    background-color: #222;
+    color: #ddd;
+  }
+
+  /* Contenedor de resultados */
+  #job-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  /* Tarjetas de empleo */
+  .card {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    width: 100%;
+    max-width: 320px;
+    color: #ddd;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.7);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+  }
+  .card:hover, .card.active {
+    background-color: #2a2a2a;
+    border-color: #007bff;
+    box-shadow: 0 4px 12px #007bffaa;
+  }
+  .card-body {
+    padding: 20px;
+  }
+  .card h5 {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    color: #eee;
+  }
+  .card p {
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #bbb;
+  }
+  .card p i {
+    margin-right: 8px;
+    color: #007bff;
+    vertical-align: middle;
+  }
+  .btn-outline-light {
+    border-color: #007bff;
+    color: #007bff;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .btn-outline-light:hover {
+    background-color: #007bff;
+    color: white;
+  }
+
+  /* Scrollbar para job-list o detalles */
+  .job-list, .job-detail {
+    scrollbar-width: thin;
+    scrollbar-color: #555 transparent;
+  }
+  .job-list::-webkit-scrollbar, .job-detail::-webkit-scrollbar {
+    width: 8px;
+  }
+  .job-list::-webkit-scrollbar-thumb, .job-detail::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
+  }
+  .job-list::-webkit-scrollbar-track, .job-detail::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  /* Responsivo */
+  @media (max-width: 768px) {
+    #job-results {
+      flex-direction: column;
+      align-items: center;
+    }
+    .card {
+      max-width: 90%;
+    }
+  }
+</style>
+
+</head>
+<body>
+
+<a href="index.html" class="btn-back">
+  <i class="bi bi-house-door"></i> Volver a inicio
+</a>
+
+<section class="py-5 bg-light text-white bg-dark" id="job-listings">
+  <div class="container px-4 px-lg-5">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold display-5">Encuentra tu próximo desafío profesional</h2>
+      <p class="text-light">Filtra, busca y postúctulate fácilmente a cientos de oportunidades actualizadas cada día.</p>
+    </div>
+
+    <!-- Filtros y orden -->
+    <div class="row mb-4 g-2 align-items-center">
+      <div class="col-md-2">
+        <select class="form-select bg-dark text-white border-secondary" id="filter-category">
+          <option value="">Categoría</option>
+          <option value="Tecnología">Tecnología</option>
+          <option value="Diseño">Diseño</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Educación">Educación</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-select bg-dark text-white border-secondary" id="filter-location">
+          <option value="">Ubicación</option>
+          <option value="Bogotá">Bogotá</option>
+          <option value="Medellín">Medellín</option>
+          <option value="Cali">Cali</option>
+          <option value="Remoto">Remoto</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-select bg-dark text-white border-secondary" id="filter-contract">
+          <option value="">Tipo de contrato</option>
+          <option value="Tiempo completo">Tiempo completo</option>
+          <option value="Medio tiempo">Medio tiempo</option>
+          <option value="Freelance">Freelance</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-select bg-dark text-white border-secondary" id="filter-salary">
+          <option value="">Salario</option>
+          <option value="2000">Más de $2.000.000</option>
+          <option value="4000">Más de $4.000.000</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control bg-dark text-white border-secondary" id="search-keyword" placeholder="Buscar por título, empresa...">
+      </div>
+      <div class="col-md-3 mt-2">
+        <select class="form-select bg-dark text-white border-secondary" id="sort-by">
+          <option value="">Ordenar por</option>
+          <option value="asc">Fecha (ascendente)</option>
+          <option value="desc">Fecha (descendente)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="row" id="job-results"></div>
+
+    <!-- Paginación -->
+    <nav class="d-flex justify-content-center mt-4">
+      <ul class="pagination" id="pagination"></ul>
+    </nav>
+  </div>
+</section>
+
+<!-- Modal de detalles de empleo -->
+<div class="modal fade" id="jobDetailModal" tabindex="-1" aria-labelledby="jobDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title" id="jobDetailModalLabel">Detalle del empleo</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <h4 id="modal-job-title"></h4>
+        <p><strong>Empresa:</strong> <span id="modal-job-company"></span></p>
+        <p><strong>Ubicación:</strong> <span id="modal-job-location"></span></p>
+        <p><strong>Tipo de contrato:</strong> <span id="modal-job-contract"></span></p>
+        <p><strong>Salario:</strong> $<span id="modal-job-salary"></span> COP</p>
+        <p><strong>Experiencia requerida:</strong> <span id="modal-job-experience"></span></p>
+        <p><strong>Publicado:</strong> <span id="modal-job-date"></span></p>
+        <hr />
+        <p id="modal-job-description">Descripción no disponible.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <a href="#" id="modal-apply-link" class="btn btn-primary" target="_blank">Postularme</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let jobs = [];
+
+  async function loadJobs() {
+    try {
+      const response = await fetch('jobs.json');
+      jobs = await response.json();
+      applyFilters();
+    } catch (error) {
+      console.error("No se pudo cargar el archivo de empleos.", error);
+    }
+  }
+
+  const jobsPerPage = 3;
+  let currentPage = 1;
+
+  function renderPagination(totalPages) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+      const li = document.createElement('li');
+      li.className = 'page-item' + (i === currentPage ? ' active' : '');
+      const a = document.createElement('a');
+      a.className = 'page-link';
+      a.href = '#';
+      a.textContent = i;
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentPage = i;
+        applyFilters();
+      });
+      li.appendChild(a);
+      pagination.appendChild(li);
+    }
+  }
+
+  function applyFilters() {
+    const category = document.getElementById('filter-category').value;
+    const location = document.getElementById('filter-location').value;
+    const contract = document.getElementById('filter-contract').value;
+    const salary = document.getElementById('filter-salary').value;
+    const keyword = document.getElementById('search-keyword').value.toLowerCase();
+    const sortBy = document.getElementById('sort-by').value;
+
+    let filteredJobs = jobs;
+
+    if (category) {
+      filteredJobs = filteredJobs.filter(job => job.category === category);
+    }
+    if (location) {
+      filteredJobs = filteredJobs.filter(job => job.location === location);
+    }
+    if (contract) {
+      filteredJobs = filteredJobs.filter(job => job.contract === contract);
+    }
+    if (salary) {
+      filteredJobs = filteredJobs.filter(job => job.salary >= parseInt(salary) * 1000);
+    }
+    if (keyword) {
+      filteredJobs = filteredJobs.filter(job => 
+        job.title.toLowerCase().includes(keyword) || 
+        job.company.toLowerCase().includes(keyword));
+    }
+
+    if (sortBy === 'asc') {
+      filteredJobs.sort((a, b) => new Date(a.date) - new Date(b.date));
+    } else if (sortBy === 'desc') {
+      filteredJobs.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    renderJobs(filteredJobs);
+  }
+
+  function renderJobs(filteredJobs) {
+    const container = document.getElementById('job-results');
+    container.innerHTML = '';
+
+    const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+    if (currentPage > totalPages) currentPage = 1;
+    renderPagination(totalPages);
+
+    const start = (currentPage - 1) * jobsPerPage;
+    const paginatedJobs = filteredJobs.slice(start, start + jobsPerPage);
+
+    paginatedJobs.forEach((job, index) => {
+      const col = document.createElement('div');
+      col.className = 'col-md-6 col-lg-4 mb-4';
+
+      const card = document.createElement('div');
+      card.className = 'card h-100';
+
+      card.innerHTML = `
+        <div class="card-body d-flex flex-column">
+          <h5 class="fw-bold">${job.title}</h5>
+          <p class="mb-1"><i class="bi bi-building"></i> ${job.company}</p>
+          <p class="mb-1"><i class="bi bi-geo-alt"></i> ${job.location}</p>
+          <p class="mb-1"><i class="bi bi-clock"></i> ${job.contract}</p>
+          <p class="mb-1"><i class="bi bi-cash"></i> $${job.salary.toLocaleString()} COP</p>
+          <p class="mb-1"><i class="bi bi-award"></i> Experiencia: ${job.experience}</p>
+          <p class="mb-1"><i class="bi bi-calendar-event"></i> ${new Date(job.date).toLocaleDateString()}</p>
+          <button class="btn btn-outline-light mt-auto" type="button" data-index="${start + index}" data-bs-toggle="modal" data-bs-target="#jobDetailModal">Ver detalles</button>
+        </div>
+      `;
+
+      col.appendChild(card);
+      container.appendChild(col);
+    });
+
+    // Añadimos listeners a los botones "Ver detalles"
+    document.querySelectorAll('#job-results button[data-index]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const jobIndex = parseInt(e.target.getAttribute('data-index'));
+        showJobDetails(jobs[jobIndex]);
+      });
+    });
+  }
+
+  function showJobDetails(job) {
+    document.getElementById('modal-job-title').textContent = job.title;
+    document.getElementById('modal-job-company').textContent = job.company;
+    document.getElementById('modal-job-location').textContent = job.location;
+    document.getElementById('modal-job-contract').textContent = job.contract;
+    document.getElementById('modal-job-salary').textContent = job.salary.toLocaleString();
+    document.getElementById('modal-job-experience').textContent = job.experience;
+    document.getElementById('modal-job-date').textContent = new Date(job.date).toLocaleDateString();
+    document.getElementById('modal-job-description').textContent = job.description || 'Descripción no disponible.';
+    document.getElementById('modal-apply-link').href = job.applyUrl || '#';
+  }
+
+  // Escuchar filtros y orden
+  document.getElementById('filter-category').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+  document.getElementById('filter-location').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+  document.getElementById('filter-contract').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+  document.getElementById('filter-salary').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+  document.getElementById('search-keyword').addEventListener('input', () => { currentPage = 1; applyFilters(); });
+  document.getElementById('sort-by').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+
+  // Cargar empleos al iniciar
+  loadJobs();
+</script>
+</body>
+</html>

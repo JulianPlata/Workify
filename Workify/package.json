@@ -1,0 +1,12 @@
+{
+  "name": "workify",
+  "version": "1.0.0",
+  "description": "Sitio web Workify: plataforma para conectar personas con oportunidades de empleo",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "jest"
+  },
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}

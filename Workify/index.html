@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Workify - Plataforma de empleo moderna</title>
+    <link rel="icon" href="assets/favicon.ico" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+    <style>
+        /* Variables para modo claro y oscuro */
+        :root {
+            --color-bg-light: #f8f9fa;
+            --color-text-light: #212529;
+            --color-bg-dark: #121212;
+            --color-text-dark: #e0e0e0;
+            --color-primary: #0056b3;
+            --color-primary-dark: #004494;
+        }
+
+        body {
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Modo claro */
+        body.light-mode {
+            background-color: var(--color-bg-light);
+            color: var(--color-text-light);
+        }
+
+        /* Navbar */
+        .navbar {
+            backdrop-filter: blur(8px);
+            background-color: rgba(18, 18, 18, 0.85);
+            transition: background-color 0.3s;
+        }
+
+        body.light-mode .navbar {
+            background-color: rgba(248, 249, 250, 0.85);
+        }
+
+        .navbar-brand,
+        .nav-link {
+            color: var(--color-text-dark) !important;
+            transition: color 0.3s;
+        }
+
+        body.light-mode .navbar-brand,
+        body.light-mode .nav-link {
+            color: var(--color-text-light) !important;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #004494, #007bff);
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        body.light-mode .hero {
+            background: linear-gradient(135deg, #cce5ff, #99ccff);
+            color: var(--color-text-light);
+        }
+
+        /* Botones */
+        .btn-login {
+            background-color: var(--color-primary);
+            border: none;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: scale(1.05);
+            background-color: var(--color-primary-dark);
+            box-shadow: 0 0 15px rgba(0, 86, 179, 0.6);
+        }
+
+        .btn-light {
+            transition: all 0.3s ease;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+
+        .btn-light:hover {
+            background-color: var(--color-primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Cards servicio */
+        .card-service {
+            border-radius: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            background-color: #212529;
+            color: white;
+        }
+
+        .card-service:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        body.light-mode .card-service {
+            background-color: #fff;
+            color: var(--color-text-light);
+            border: 1px solid #ddd;
+        }
+
+        /* Sección FAQ */
+        #faq .accordion-button {
+            background-color: #212529;
+            color: white;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light-mode #faq .accordion-button {
+            background-color: var(--color-bg-light);
+            color: var(--color-text-light);
+        }
+
+        /* Buscador */
+        #search-jobs input {
+            border-radius: 2rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        /* Chatbot botón */
+        #chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--color-primary);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.6);
+            z-index: 1050;
+            transition: background-color 0.3s;
+        }
+
+        #chatbot-toggle:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        #chatbot-box {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 320px;
+            max-width: 90vw;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1051;
+            font-family: Arial, sans-serif;
+        }
+
+        #chatbot-header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 12px 16px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbot-close {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #chatbot-messages {
+            padding: 16px;
+            height: 200px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            font-size: 14px;
+            color: #333;
+        }
+
+        #chatbot-input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        #chatbot-input {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        #chatbot-send {
+            background-color: var(--color-primary);
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            margin-left: 8px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #chatbot-send:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        body.light-mode #chatbot-box {
+            background-color: #f0f0f0;
+        }
+
+        /* Footer redes sociales */
+        footer .social-icons a {
+            color: var(--color-text-dark);
+            margin: 0 10px;
+            font-size: 24px;
+            transition: color 0.3s;
+        }
+
+        body.light-mode footer .social-icons a {
+            color: var(--color-text-light);
+        }
+
+        footer .social-icons a:hover {
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navegación -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Workify</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Menú de navegación">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                    <li class="nav-item">
+                        <div class="form-check form-switch ms-3">
+                            <input class="form-check-input" type="checkbox" id="darkModeToggle" />
+                            <label class="form-check-label text-nowrap" for="darkModeToggle">Modo Claro</label>
+                        </div>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-login" href="login.html"><i class="bi bi-box-arrow-in-right"></i> Iniciar
+                            Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero" data-aos="zoom-in">
+        <div class="container">
+            <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Conecta con el trabajo de tus sueños</h1>
+            <p class="lead animate__animated animate__fadeInUp">Workify te conecta con empleos reales, de forma fácil y segura.</p>
+            <a class="btn btn-light btn-lg mt-4 animate__animated animate__fadeInUp" href="servicios.html">Explorar servicios</a>
+        </div>
+    </header>
+
+    <!-- Buscador de empleos -->
+    <section id="search-jobs" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="fw-bold mb-4 text-center">Buscar Empleos</h2>
+            <form id="jobSearchForm" class="d-flex justify-content-center gap-3 flex-wrap">
+                <input type="text" id="keyword" class="form-control w-auto" placeholder="Palabra clave" />
+                <input type="text" id="location" class="form-control w-auto" placeholder="Ubicación" />
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+            <div id="searchResults" class="mt-4"></div>
+        </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="py-5 bg-dark">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">¿Qué ofrecemos?</h2>
+                <p>Plataforma moderna para empleadores y buscadores de empleo</p>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4" data-aos="fade-up">
+                    <div class="card card-service h-100 p-4">
+                        <i class="bi bi-briefcase-fill fs-1 mb-3"></i>
+                        <h5 class="fw-bold">Publicación de Vacantes</h5>
+                        <p>Empresas pueden registrar y gestionar sus oportunidades fácilmente.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="150">
+                    <div class="card card-service h-100 p-4">
+                        <i class="bi bi-person-lines-fill fs-1 mb-3"></i>
+                        <h5 class="fw-bold">Perfil Profesional</h5>
+                        <p>Crea tu hoja de vida y aplica a empleos en segundos.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card card-service h-100 p-4">
+                        <i class="bi bi-bar-chart-fill fs-1 mb-3"></i>
+                        <h5 class="fw-bold">Estadísticas en Tiempo Real</h5>
+                        <p>Consulta el desempeño de tus postulaciones y ofertas activas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proyectos -->
+    <section id="proyectos" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Proyectos Destacados</h2>
+                <p>Conoce iniciativas y casos de éxito de nuestra comunidad</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4" data-aos="fade-right">
+                    <div class="card p-4 border rounded shadow-sm">
+                        <h5 class="fw-bold">Programa Jóvenes al Trabajo</h5>
+                        <p>Iniciativa que conecta a jóvenes con sus primeras oportunidades laborales mediante formación y mentorías.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4" data-aos="fade-left">
+                    <div class="card p-4 border rounded shadow-sm">
+                        <h5 class="fw-bold">Impulsa Empresas</h5>
+                        <p>Apoyamos a emprendimientos con herramientas digitales para acelerar su crecimiento y empleabilidad.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-5 bg-dark">
+        <div class="container">
+            <h2 class="fw-bold text-center mb-4">Preguntas Frecuentes</h2>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            ¿Cómo creo un perfil profesional?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Solo debes registrarte, completar tus datos y subir tu hoja de vida en la plataforma.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            ¿Puedo postular a varios empleos al mismo tiempo?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Sí, puedes aplicar a todas las vacantes que te interesen sin límite.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            ¿Cómo puedo contactar a una empresa?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Puedes enviar un mensaje a través de la plataforma o usar los datos de contacto publicados en la vacante.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="fw-bold mb-4 text-center">Contáctanos</h2>
+            <form id="contactForm" novalidate>
+                <div class="row g-3 justify-content-center">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="name" placeholder="Tu nombre" required />
+                        <div class="invalid-feedback">Por favor ingresa tu nombre.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-control" id="email" placeholder="ejemplo@correo.com" required />
+                        <div class="invalid-feedback">Por favor ingresa un correo válido.</div>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="message" class="form-label">Mensaje</label>
+                        <textarea class="form-control" id="message" rows="4" placeholder="Tu mensaje" required></textarea>
+                        <div class="invalid-feedback">Por favor ingresa un mensaje.</div>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <button type="submit" class="btn btn-primary w-100">Enviar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Mapa Google Maps -->
+    <section id="mapa" class="py-5 bg-dark">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4 text-white">Nuestra Oficina</h2>
+            <div class="ratio ratio-16x9 rounded" style="border: 2px solid var(--color-primary); overflow: hidden;">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.367271349462!2d-74.07429148521704!3d4.622559843523372!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f99b9f96c8c3d%3A0xa26e7b5d23e5730!2sCentro%20Comercial%20Gran%20Estaci%C3%B3n!5e0!3m2!1ses!2sco!4v1684172612345!5m2!1ses!2sco"
+                    style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                    title="Mapa de la oficina"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+<footer class="text-center text-md-start" style="background-color: #1f1f1f; padding: 40px 20px; color: #bbb;">
+    <div class="container">
+        <div class="row">
+            <!-- Institucional -->
+            <div class="col-6 col-md-3 mb-4">
+                <h6 class="text-light fw-bold">Institucional</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-secondary text-decoration-none">¿Quiénes somos?</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Contacto para candidatos</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Computrabajo en otros países</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Aviso legal y privacidad</a></li>
+                </ul>
+            </div>
+
+            <!-- Personas -->
+            <div class="col-6 col-md-3 mb-4">
+                <h6 class="text-light fw-bold">Personas</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-secondary text-decoration-none">Preguntas frecuentes de candidato</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Empleos por categoría</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Empleos por ciudad</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Empleos por departamento</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Empleos por cargo profesional</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Empleos por salario</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Empresas por localización</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Empresas por industria</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Talentview 3D</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Cuenta Premium</a></li>
+                </ul>
+            </div>
+
+            <!-- Reclutadores -->
+            <div class="col-6 col-md-3 mb-4">
+                <h6 class="text-light fw-bold">Reclutadores</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-secondary text-decoration-none">Preguntas frecuentes de reclutadores</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Contacto para reclutadores</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Buscar personas</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">Blog para empresas</a></li>
+                </ul>
+            </div>
+
+            <!-- Redes sociales y botones -->
+            <div class="col-6 col-md-3 mb-4 d-flex flex-column align-items-start">
+                <div class="mb-3">
+                    <a href="#" class="btn btn-link p-0 text-secondary" aria-label="Cerrar">
+                        <i class="bi bi-x-circle fs-4"></i>
+                    </a>
+                    <a href="#" class="btn btn-link p-0 text-secondary ms-2" aria-label="Instagram">
+                        <i class="bi bi-instagram fs-4"></i>
+                    </a>
+                    <a href="#" class="btn btn-link p-0 text-secondary ms-2" aria-label="TikTok">
+                        <i class="bi bi-tiktok fs-4"></i>
+                    </a>
+                    <a href="#" class="btn btn-link p-0 text-secondary ms-2" aria-label="Facebook">
+                        <i class="bi bi-facebook fs-4"></i>
+                    </a>
+                    <a href="#" class="btn btn-link p-0 text-secondary ms-2" aria-label="LinkedIn">
+                        <i class="bi bi-linkedin fs-4"></i>
+                    </a>
+                    <a href="#" class="btn btn-link p-0 text-secondary ms-2" aria-label="Blogger">
+                        <i class="bi bi-blogger fs-4"></i>
+                    </a>
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-secondary btn-sm mb-2 d-flex align-items-center justify-content-center" style="gap: 6px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style="height: 24px;">
+                        DESCARGAR EN Google Play
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary btn-sm mb-2 d-flex align-items-center justify-content-center" style="gap: 6px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/67/App_Store_(iOS)_logo.svg" alt="App Store" style="height: 24px;">
+                        DESCARGAR EN App Store
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center" style="gap: 6px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Huawei_AppGallery_logo.svg" alt="App Gallery" style="height: 24px;">
+                        DESCARGAR EN AppGallery
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border-color: #333; margin-top: 30px;">
+
+        <div class="text-center pt-3">
+            <p class="mb-0">&copy; 2025 Workify. Todos los derechos reservados.</p>
+            <p>
+                <a href="#" class="text-secondary text-decoration-none me-3">Términos y Condiciones</a> |
+                <a href="#" class="text-secondary text-decoration-none ms-3">Política de Privacidad</a>
+            </p>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- Chatbot -->
+    <button id="chatbot-toggle" aria-label="Abrir chat de soporte"><i class="bi bi-chat-dots-fill"></i></button>
+    <div id="chatbot-box" role="dialog" aria-modal="true" aria-labelledby="chatbot-header" tabindex="-1">
+        <div id="chatbot-header">
+            Soporte Workify
+            <button id="chatbot-close" aria-label="Cerrar chat">&times;</button>
+        </div>
+        <div id="chatbot-messages" role="log" aria-live="polite"></div>
+        <div id="chatbot-input-container">
+            <input type="text" id="chatbot-input" aria-label="Escribe tu mensaje aquí" placeholder="Escribe tu mensaje..." />
+            <button id="chatbot-send" aria-label="Enviar mensaje">Enviar</button>
+        </div>
+    </div>
+
+    <!-- Modal confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mensaje enviado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Gracias por contactarnos. Te responderemos lo antes posible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // Inicializar AOS
+        AOS.init({ once: true });
+
+        // Modo oscuro / claro toggle y persistencia localStorage
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                body.classList.add('light-mode');
+                darkModeToggle.checked = true;
+            } else {
+                body.classList.remove('light-mode');
+                darkModeToggle.checked = false;
+            }
+        }
+
+        // Cargar preferencia guardada o modo oscuro por defecto
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
+
+        darkModeToggle.addEventListener('change', () => {
+            if (darkModeToggle.checked) {
+                applyTheme('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                applyTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Animaciones en botones (ya están con hover CSS)
+
+        // Buscador de empleos - Demo frontend con resultados simulados
+        const jobs = [
+            { title: 'Desarrollador Frontend', location: 'Bogotá' },
+            { title: 'Analista de Datos', location: 'Medellín' },
+            { title: 'Diseñador UX/UI', location: 'Cali' },
+            { title: 'Ingeniero DevOps', location: 'Bogotá' },
+            { title: 'Marketing Digital', location: 'Barranquilla' },
+        ];
+
+        const jobSearchForm = document.getElementById('jobSearchForm');
+        const searchResults = document.getElementById('searchResults');
+
+        jobSearchForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const keyword = document.getElementById('keyword').value.toLowerCase();
+            const location = document.getElementById('location').value.toLowerCase();
+
+            const filteredJobs = jobs.filter(job =>
+                job.title.toLowerCase().includes(keyword) &&
+                job.location.toLowerCase().includes(location)
+            );
+
+            if (filteredJobs.length === 0) {
+                searchResults.innerHTML = '<p class="text-center text-muted">No se encontraron empleos que coincidan.</p>';
+                return;
+            }
+
+            searchResults.innerHTML = filteredJobs.map(job =>
+                `<div class="card mb-3 shadow-sm" data-aos="fade-up">
+                    <div class="card-body">
+                        <h5 class="card-title">${job.title}</h5>
+                        <p class="card-text"><i class="bi bi-geo-alt-fill"></i> ${job.location}</p>
+                        <a href="#" class="btn btn-primary">Ver oferta</a>
+                    </div>
+                </div>`
+            ).join('');
+        });
+
+        // Formulario con validación avanzada y feedback modal
+        const contactForm = document.getElementById('contactForm');
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+        contactForm.addEventListener('submit', e => {
+            e.preventDefault();
+            if (!contactForm.checkValidity()) {
+                e.stopPropagation();
+                contactForm.classList.add('was-validated');
+                return;
+            }
+            confirmModal.show();
+            contactForm.reset();
+            contactForm.classList.remove('was-validated');
+        });
+
+        // Chatbot simple - respuestas básicas y UI toggle
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+        const chatbotBox = document.getElementById('chatbot-box');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const chatbotSend = document.getElementById('chatbot-send');
+
+        const faqAnswers = {
+            'horarios': 'Nuestro horario de atención es de lunes a viernes de 8:00 a 18:00.',
+            'postular': 'Puedes postular a varias ofertas sin límite desde tu perfil.',
+            'contacto': 'Puedes contactar a las empresas vía la plataforma o datos publicados.',
+            'trabajo remoto': 'Algunas ofertas permiten trabajo remoto, revisa cada oferta.',
+            'salario': 'Los salarios varían según la posición y experiencia.',
+            'default': 'Disculpa, no entendí tu pregunta. Por favor intenta con otras palabras.'
+        };
+
+        function addChatMessage(text, fromUser = false) {
+            const msg = document.createElement('div');
+            msg.className = fromUser ? 'chat-msg user-msg' : 'chat-msg bot-msg';
+            msg.textContent = text;
+            chatbotMessages.appendChild(msg);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        chatbotToggle.addEventListener('click', () => {
+            chatbotBox.classList.toggle('visible');
+            chatbotInput.focus();
+        });
+
+        chatbotClose.addEventListener('click', () => {
+            chatbotBox.classList.remove('visible');
+        });
+
+        chatbotSend.addEventListener('click', () => {
+            const message = chatbotInput.value.trim();
+            if (!message) return;
+            addChatMessage(message, true);
+
+            let response = faqAnswers['default'];
+            for (const key in faqAnswers) {
+                if (message.toLowerCase().includes(key)) {
+                    response = faqAnswers[key];
+                    break;
+                }
+            }
+            setTimeout(() => addChatMessage(response), 700);
+            chatbotInput.value = '';
+            chatbotInput.focus();
+        });
+
+        chatbotInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') chatbotSend.click();
+        });
+    </script>
+</body>
+
+</html>

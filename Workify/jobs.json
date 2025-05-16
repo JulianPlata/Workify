@@ -1,0 +1,62 @@
+[
+  {
+    "title": "Desarrollador Frontend React",
+    "company": "TechWave",
+    "location": "Bogotá",
+    "contract": "Tiempo completo",
+    "salary": 4200000,
+    "experience": "2 años",
+    "category": "Tecnología",
+    "date": "2025-05-15"
+  },
+  {
+    "title": "Diseñador UI/UX",
+    "company": "PixelHouse",
+    "location": "Medellín",
+    "contract": "Freelance",
+    "salary": 3000000,
+    "experience": "1 año",
+    "category": "Diseño",
+    "date": "2025-05-10"
+  },
+  {
+    "title": "Especialista en SEO",
+    "company": "Searchify",
+    "location": "Remoto",
+    "contract": "Medio tiempo",
+    "salary": 2800000,
+    "experience": "3 años",
+    "category": "Marketing",
+    "date": "2025-05-14"
+  },
+  {
+    "title": "Profesor de Inglés Online",
+    "company": "LearnFast",
+    "location": "Cali",
+    "contract": "Freelance",
+    "salary": 2500000,
+    "experience": "2 años",
+    "category": "Educación",
+    "date": "2025-05-12"
+  },
+  {
+    "title": "Ingeniero DevOps",
+    "company": "CloudWorks",
+    "location": "Bogotá",
+    "contract": "Tiempo completo",
+    "salary": 5000000,
+    "experience": "4 años",
+    "category": "Tecnología",
+    "date": "2025-05-11"
+  },
+  {
+    "title": "Content Manager",
+    "company": "ViralContent Co.",
+    "location": "Remoto",
+    "contract": "Tiempo completo",
+    "salary": 3500000,
+    "experience": "2 años",
+    "category": "Marketing",
+    "date": "2025-05-13"
+  }
+]
